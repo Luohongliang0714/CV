@@ -22,7 +22,7 @@ function  Merkmale=harris_detektor(Image,varargin)
     P.addOptional('do_plot', 1, @(x)isnumeric(x));
     P.addOptional('tile_size', 4, @(x)isnumeric(x));
     P.addOptional('N', 20, @(x)isnumeric(x));
-    P.addOptional('min_dist', 30, @(x)isnumeric(x));
+    P.addOptional('min_dist', 1, @(x)isnumeric(x));
     % Lese den Input
     P.parse(Image,varargin{:});
 

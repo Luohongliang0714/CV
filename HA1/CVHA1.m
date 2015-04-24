@@ -1,4 +1,4 @@
-% Gruppenmitglieder:
+% Gruppenmitglieder: Christoph Wittmann, Simon Bilgeri
 
 %Für die letztendliche Abgabe bitte die Kommentare in den folgenden Zeilen
 %enfernen und sicherstellen, dass alle optionalen Parameter über den
