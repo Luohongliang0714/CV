@@ -58,8 +58,8 @@ function  Merkmale=harris_detektor(Image,varargin)
     % trace
     H=G(:,:,1).*G(:,:,4)-G(:,:,2).*G(:,:,3)-k*(G(:,:,1)+G(:,:,4)).^2;
     %H=(H>-tau) .* (H < tau); %Textureless
-    %H=H<-tau; %Kante
-    H=H>tau;
+    H=H<-tau; %Kante
+    %H=H>tau;
     %% show corners if specified
     if do_plot
         Img(:,:,1)=Img(:,:,1)+uint8(H*255);
