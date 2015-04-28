@@ -20,7 +20,7 @@ function  Merkmale=harris_detektor(Image,varargin)
     % (default) = 1;
     P.addOptional('tau', 0.5, @(x)isscalar(x)&isnumeric(x));
     P.addOptional('do_plot', 1, @(x)islogical(x));
-    P.addOptional('tile_size', 10, @(x) (isscalar(x) | (size(x)==[2,1]))&isnumeric(x));
+    P.addOptional('tile_size', 10, @(x) (isscalar(x) | prod(size(x)==[2,1]))&isnumeric(x));
     P.addOptional('N', 20, @(x)isscalar(x)&isnumeric(x));
     P.addOptional('min_dist', 30, @(x)isscalar(x)&isnumeric(x));
     % Lese den Input
@@ -65,25 +65,50 @@ function  Merkmale=harris_detektor(Image,varargin)
     %H=H<-tau; %Kante
     
     H_mask=H>tau; % Ecke
-    %% show corners if specified
-    if do_plot
-        Img(:,:,1)=Img(:,:,1)+uint8(H*255);
-        imshow(Img)
-    end
+
     % free memory
     clearvars G;
     % Filter H matrix with mask
     H=H.*H_mask;
     % reshape H matrix with tile_size
-%     if isscalar(tile_size)
-%         Tiles=reshape(H,tile_size,tile_size);
-%     else
-%         Tiles=reshape(H,tile_size(1),tile_size(2));
-%     end
-    Merkmale=Tiles;
-  
-  
-  
-  
+    if isscalar(tile_size)
+        randy=mod(size(H,1),tile_size);
+        randx=mod(size(H,2),tile_size);
+        num_tiles=((size(H,1)-randy)/tile_size)*((size(H,2)-randx)/tile_size);
+        Tiles=reshape(H(1:size(H,1)-randy,1:size(H,2)-randx),tile_size,tile_size,num_tiles);
+    else
+        % falls vector
+        Tiles=reshape(H,tile_size(1),tile_size(2));
+    end
+    num_tilesy=((size(H,1)-randy)/tile_size);
+    num_tilesx=((size(H,2)-randx)/tile_size);
+    M=zeros(2,N*num_tilesy*num_tilesx);
+    corner_count=0;
+    for i=1:num_tilesy
+        for j=1:num_tilesx
+            tile=H(1+(i-1)*tile_size:1+i*tile_size,1+(j-1)*tile_size:1+j*tile_size);
+            [sortedValues,sortIndex] = sort(tile(:),'descend');
+            maxIndex = sortIndex(1:N);
+            maxIndex(sortedValues(1:N)==0)=[];
+            [row,col] = ind2sub(size(tile), maxIndex);
+            row=row+(i-1)*tile_size;
+            col=col+(j-1)*tile_size;
+            M(:,corner_count+1:corner_count+size(row,1))=[col,row]';
+            corner_count=corner_count+size(row,1);
+        end
+    end
+    M=M(:,any(M));
+    Merkmale=M;
+
+        %% show corners if specified
+    if do_plot
+        figure;
+        title('Harris Detector using tiles and min distance');
+        imshow(Img)
+        hold on;            %# Add subsequent plots to the image
+        plot(M,'rx','MarkerSize',5);  %# NOTE: x_p and y_p are switched (see note below)!
+        hold off; 
+        
+    end
 end
 
