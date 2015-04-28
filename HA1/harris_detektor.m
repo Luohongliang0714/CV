@@ -35,7 +35,7 @@ function  Merkmale=harris_detektor(Image,varargin)
     do_plot = P.Results.do_plot;
     tile_size=P.Results.tile_size;
     N=P.Results.N;
-    mind_dist=P.Results.min_dist;
+    min_dist=P.Results.min_dist;
     sigma=1;
     %% Harris detector
     %% Convert to greyscale and perform sobel filter
@@ -71,14 +71,28 @@ function  Merkmale=harris_detektor(Image,varargin)
     % Filter H matrix with mask
     H=H.*H_mask;
     % reshape H matrix with tile_size
-    if isscalar(tile_size)
-        randy=mod(size(H,1),tile_size);
-        randx=mod(size(H,2),tile_size);
-        num_tiles=((size(H,1)-randy)/tile_size)*((size(H,2)-randx)/tile_size);
-        Tiles=reshape(H(1:size(H,1)-randy,1:size(H,2)-randx),tile_size,tile_size,num_tiles);
-    else
-        % falls vector
-        Tiles=reshape(H,tile_size(1),tile_size(2));
+%     if isscalar(tile_size)
+%         randy=mod(size(H,1),tile_size);
+%         randx=mod(size(H,2),tile_size);
+%         num_tiles=((size(H,1)-randy)/tile_size)*((size(H,2)-randx)/tile_size);
+%         Tiles=reshape(H(1:size(H,1)-randy,1:size(H,2)-randx),tile_size,tile_size,num_tiles);
+%     else
+%         % falls vector
+%         Tiles=reshape(H,tile_size(1),tile_size(2));
+%     end
+    % Filter all Features which do not have the min_dist. 
+    % Search for next_neighbor and keep larget one
+    [feat_r,feat_c]=find(H);
+    feat_mat=[feat_r,feat_c]';
+    feat_mat_res=feat_mat;
+    dist=zeros(size(feat_mat));
+    dist2=zeros(size(feat_mat,2));
+    for i=1:size(feat_r,1)
+        dist(1,:)=(feat_mat(1,:)-feat_mat(1,i))^2;
+        dist(2,:)=(feat_mat(2,:)-feat_mat(2,i))^2;
+        dist2=dist(1,:)+dist(2,:); % Wurzel brauchen wir nicht
+        dist2(dist2==0)=[];
+        nn_ind=min(dist2)
     end
     num_tilesy=((size(H,1)-randy)/tile_size);
     num_tilesx=((size(H,2)-randx)/tile_size);
@@ -106,7 +120,7 @@ function  Merkmale=harris_detektor(Image,varargin)
         title('Harris Detector using tiles and min distance');
         imshow(Img)
         hold on;            %# Add subsequent plots to the image
-        plot(M,'rx','MarkerSize',5);  %# NOTE: x_p and y_p are switched (see note below)!
+        plot(M(1,:),M(2,:),'rx','MarkerSize',5);  %# NOTE: x_p and y_p are switched (see note below)!
         hold off; 
         
     end
