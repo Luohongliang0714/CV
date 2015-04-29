@@ -89,7 +89,7 @@ function  Merkmale=harris_detektor(Image,varargin)
                 % shift matrix (borders dont care because they are 0 anyways)
                 shift_mat(:,:,2)=circshift(H,[i,j]); % faster
                 shift_mat(:,:,1)=max(shift_mat,[],3);
-                % if the values are the same, delete one of the features,
+                % if the H values are the same, delete one of the features,
                 % quite slow
                 H=H.*(shift_mat(:,:,2)~=H);
             end
