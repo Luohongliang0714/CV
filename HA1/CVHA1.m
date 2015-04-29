@@ -1,8 +1,8 @@
 % Gruppenmitglieder: Christoph Wittmann, Simon Bilgeri
 
 %Für die letztendliche Abgabe bitte die Kommentare in den folgenden Zeilen
-%enfernen und sicherstellen, dass alle optionalen Parameter Ã¼ber den
-%entsprechenden Funktionsaufruf fun('var',value) modifiziert werden kÃ¶nnen.
+%enfernen und sicherstellen, dass alle optionalen Parameter Über den
+%entsprechenden Funktionsaufruf fun('var',value) modifiziert werden können.
 
 %% Bild laden
  Image = imread('szene.jpg');
@@ -12,5 +12,6 @@
 %% Harris-Merkmale berechnen
  tic
  %Merkmale = harris_detektor(IGray,'do_plot',true);
- Merkmale = harris_detektor(Image,'tau',1000,'do_plot',true,'tile_size',200,'N',30,'segment_length',8,'min_dist',10);
+ Merkmale = harris_detektor(Image,'tau',1000,'do_plot',true,'tile_size',[400;400],'N',3,'segment_length',4,'min_dist',5);
  toc
+ fprintf('#Anzahl der Merkmale: %d\n', size(Merkmale,2));
