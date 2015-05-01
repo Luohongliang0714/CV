@@ -132,9 +132,70 @@ function  Merkmale=harris_detektor(Image,varargin)
             end
         end
     end
-    M=M(:,any(M)); % remove 0 elements
-    Merkmale=M;
+    
+    
+%     M=M(:,any(M)); % remove 0 elements
+%     Merkmale=M;
 
+    %% Randbehandlung
+    if randx~=0 
+        %determine N according to tile_size
+        Nrx=ceil(N*((randx*tile_size(2))/(tile_size(1)*tile_size(2))));
+        %Nry=floor(N*((randy*tile_size(1))/(tile_size(1)*tile_size(2))));
+        
+        for i=1:num_tilesy
+            %get the tile
+            tile=H(1+(i-1)*tile_size(2):1+i*tile_size(2)-1,1+tile_size(1)*num_tilesx:tile_size(1)*num_tilesx+randx);
+            %sort its entries
+            [sortedValues,sortIndex] = sort(tile(:),'descend');
+            if size(sortIndex,1)>=Nrx % more entries than N found
+                maxIndex = sortIndex(1:Nrx);
+                maxIndex(sortedValues(1:Nrx)==0)=[]; % get the N largest, get rid of 0 elements
+            else % less than N found
+                maxIndex = sortIndex(1:end);
+                maxIndex(sortedValues(1:end)==0)=[];
+            end
+            [row,col] = ind2sub(size(tile), maxIndex);
+            row=row+(i-1)*tile_size(2);
+            col=col+num_tilesx*tile_size(1);
+            if size(maxIndex,1)~=0 && ~isempty(maxIndex)
+                % add features to result matrix
+                M(:,corner_count+1:corner_count+size(row,1))=[col,row]';
+                corner_count=corner_count+size(row,1);
+            end
+        end
+    end
+    
+    if randy~=0
+        %determine N according to tile_size
+        Nry=ceil(N*((randy*tile_size(1))/(tile_size(1)*tile_size(2))));
+        
+        for j=1:num_tilesx
+            %get the tile
+            tile=H(1+tile_size(2)*num_tilesy:tile_size(2)*num_tilesy+randy, 1+(j-1)*tile_size(1):1+j*tile_size(1)-1);
+            %sort its entries
+            [sortedValues,sortIndex] = sort(tile(:),'descend');
+            if size(sortIndex,1)>=Nry % more entries than N found
+                maxIndex = sortIndex(1:Nry);
+                maxIndex(sortedValues(1:Nry)==0)=[]; % get the N largest, get rid of 0 elements
+            else % less than N found
+                maxIndex = sortIndex(1:end);
+                maxIndex(sortedValues(1:end)==0)=[];
+            end
+            [row,col] = ind2sub(size(tile), maxIndex);
+            row=row+num_tilesy*tile_size(2);
+            col=col+(j-1)*tile_size(1);
+            if size(maxIndex,1)~=0 && ~isempty(maxIndex)
+                % add features to result matrix
+                M(:,corner_count+1:corner_count+size(row,1))=[col,row]';
+                corner_count=corner_count+size(row,1);
+            end
+        end
+    end
+     M=M(:,any(M)); % remove 0 elements
+     Merkmale=M;
+
+    
     %% show corners if specified
     if do_plot
         figure;
