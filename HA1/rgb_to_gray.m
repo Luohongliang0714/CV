@@ -1,6 +1,5 @@
 function [Gray_image]=rgb_to_gray(Image)
-% Diese Funktion soll ein RGB-Bild in ein Graustufenbild umwandeln. Falls
-% das Bild bereits in Graustufen vorliegt, soll es zurückgegeben werden.
+% Convert image to gray, if not already gray
 if size(Image,3)==1
     Gray_image=Image;
     if isa(Gray_image, 'double')
