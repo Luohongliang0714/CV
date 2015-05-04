@@ -10,7 +10,7 @@ IGray = rgb_to_gray(Image);
 
 %% Harris-Merkmale berechnen
 tic
-Merkmale = harris_detektor(IGray,'k',0.05,'tau',1,'do_plot',true,'tile_size',[400;400],'N',3,'segment_length',4,'min_dist',5);
+Merkmale = harris_detektor(IGray,'k',0.05,'tau',1,'do_plot',true,'tile_size',[200;200],'N',2,'segment_length',4,'min_dist',5);
 toc
 fprintf('#Anzahl der Merkmale: %d\n', size(Merkmale,2));
  
