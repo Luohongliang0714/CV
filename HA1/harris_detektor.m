@@ -8,13 +8,13 @@ function  Merkmale=harris_detektor(Image,varargin)
     P.addRequired('Image', @(x)isnumeric(x)); %Bild
     % Liste der optionalen ParameterMerkmale
     % Größe des Bildsegments
-    % (default) = 10;
+    % (default) = 4;
     P.addOptional('segment_length', 4, @(x) x ~=0);
     % Ecken- und Kantengewichtung mit k
     % (default) = 0.05;
     P.addOptional('k', 0.05, @(x)isscalar(x)&isnumeric(x));
     % Schwellenwert tau
-    % (default) = 400;
+    % (default) = 1;
     P.addOptional('tau', 1, @(x)isscalar(x)&isnumeric(x));
     P.addOptional('do_plot', 1, @(x)islogical(x));
     % Größe der Kacheln, default[ 200,200]
