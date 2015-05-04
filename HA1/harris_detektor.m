@@ -78,7 +78,7 @@ function  Merkmale=harris_detektor(Image,varargin)
     clearvars G;
     
     %% Purge all smaller features within min_dist
-    % Delate image with [min_dist*2+1,min_dist*2+1] mask
+    % Delate image with circular [min_dist*2+1,min_dist*2+1] mask
     % --> search for max element within window
     % only allow unchanged values -> smaller ones are purged
     % purge features at the border within min_dist first
@@ -90,7 +90,8 @@ function  Merkmale=harris_detektor(Image,varargin)
     shift_mat(:,:,1)=H;
     for i=-min_dist:min_dist
         for j=-min_dist:min_dist
-            if (j~=0 || i~=0)
+            distance=sqrt(i^2+j^2);
+            if ((j~=0 || i~=0) && distance <=min_dist)
                 % shift matrix (borders dont care because they are 0 anyways)
                 shift_mat(:,:,2)=circshift(H,[i,j]); % faster
                 shift_mat(:,:,1)=max(shift_mat,[],3);
