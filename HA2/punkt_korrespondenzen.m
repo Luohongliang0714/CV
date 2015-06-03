@@ -60,30 +60,16 @@ mean_val1=mean(intensity_val1);
 mean_val2=mean(intensity_val2);
 stdev_val1=sqrt(var(intensity_val1));
 stdev_val2=sqrt(var(intensity_val2));
-
 num_Merkmale1=size(Mpt1,2);
-num_Merkmale2=size(Mpt2,2);
-Korrespondenzen=zeros(4,num_Merkmale1); 
-num_korrespondenzen=0;
-for i=1:num_Merkmale1
-    best_match=[0;0;-1]; % update best match within min_corr iteratively, x,y,NCC
-    for j=1:num_Merkmale2
-        % Get intesity vector, mean and standart deviation and compute NCC
-        % calculate normalized cross - correlation:
-        % Ncc=1/(N-1)*((p1-mean1)/std1)'*(p2-mean2)/std2)
-        NCC=(((intensity_val1(:,i)-mean_val1(i))/stdev_val1(i))'*(intensity_val2(:,j)-mean_val2(j))/stdev_val2(j))/((window_length)^2-1);
-        if best_match(3)<NCC && NCC >=min_corr
-            best_match=[Mpt2(:,j);NCC];
-        end
-    end
-    if best_match(1)~=0
-        % Korrespondenz hinzufügen
-        num_korrespondenzen=num_korrespondenzen+1;
-        Korrespondenzen(:,num_korrespondenzen)=[Mpt1(:,i);best_match(1:2)];
-    end
-end
-% Get rid of 0 correspondences
-Korrespondenzen(:,~any(Korrespondenzen))=[];
+% normalize intensity values
+intensity_val1=bsxfun(@rdivide,bsxfun(@minus,intensity_val1,bsxfun(@times,ones(window_length^2,1),mean_val1)),bsxfun(@times,ones(window_length^2,1),stdev_val1));
+intensity_val2=bsxfun(@rdivide,bsxfun(@minus,intensity_val2,bsxfun(@times,ones(window_length^2,1),mean_val2)),bsxfun(@times,ones(window_length^2,1),stdev_val2));
+NCC=1/((window_length)^2-1)*intensity_val1'*intensity_val2;
+[ncc_val,ncc_id]=max(NCC,[],2);
+ncc_id_m2=ncc_id(ncc_val>=min_corr);
+ncc_id_m1=(1:num_Merkmale1)';
+ncc_id_m1=ncc_id_m1(ncc_val>=min_corr);
+Korrespondenzen=[Mpt1(:,ncc_id_m1);Mpt2(:,ncc_id_m2)];
 t1=toc;
 
 if (sum(num_merkmal_border)>0)
@@ -96,7 +82,8 @@ if do_plot
     % Sortiere Korrespondenzen nach x1 und y1:
     Korrespondenzen=sortrows(Korrespondenzen',[1,2])';
     colors=char('blue','red','green','magenta','yellow','cyan');
-    marker_size=5;
+    markers=char('o','s','^','v','>','<','p','h');
+    marker_size=7;
     font_size=8;
     offset=2*font_size+marker_size+1;
     figure;
@@ -104,9 +91,9 @@ if do_plot
     hold on;
     title('Found matches')
     for i=1:size(Korrespondenzen,2)
-        plot(Korrespondenzen(1,i),Korrespondenzen(2,i),strcat(colors(mod(i,size(colors,1))+1,:),'o'),'MarkerSize',marker_size)
+        plot(Korrespondenzen(1,i),Korrespondenzen(2,i),strcat(colors(mod(i,size(colors,1))+1,:),markers(mod(i,size(markers,1))+1,:)),'MarkerSize',marker_size)
         text(Korrespondenzen(1,i),Korrespondenzen(2,i)+offset,num2str(i),'Color',colors(mod(i,size(colors,1))+1,:),'FontSize',font_size)
-        plot(Korrespondenzen(3,i)+size(I1,2),Korrespondenzen(4,i),strcat(colors(mod(i,size(colors,1))+1,:),'o'),'MarkerSize',marker_size)
+        plot(Korrespondenzen(3,i)+size(I1,2),Korrespondenzen(4,i),strcat(colors(mod(i,size(colors,1))+1,:),markers(mod(i,size(markers,1))+1,:)),'MarkerSize',marker_size)
         text(Korrespondenzen(3,i)+size(I1,2),Korrespondenzen(4,i)+offset,num2str(i),'Color',colors(mod(i,size(colors,1))+1,:),'FontSize',font_size)
         line([Korrespondenzen(1,i),Korrespondenzen(3,i)+size(I1,2)],Korrespondenzen([2,4],i),'Color',colors(mod(i,size(colors,1))+1,:));
     end

@@ -13,4 +13,4 @@ Merkmale2 = harris_detektor(IGray2,'k',0.05,'N',100,'min_dist',80,'segment_lengt
 
 
 %% Korrespondenzschätzung
-Korrespondenzen = punkt_korrespondenzen(IGray1,IGray2,Merkmale1,Merkmale2, 'window_length', 121, 'min_corr', 0.90, 'do_plot', true);
+Korrespondenzen = punkt_korrespondenzen(IGray1,IGray2,Merkmale1,Merkmale2, 'window_length', 191, 'min_corr', 0.915, 'do_plot', true);
