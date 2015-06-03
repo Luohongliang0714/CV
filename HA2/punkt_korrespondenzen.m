@@ -8,9 +8,9 @@ P = inputParser;
 
 % Liste der optionalen Parameter
 % Fensterlänge
-P.addOptional('window_length', 5, @isnumeric)
+P.addOptional('window_length', 151, @isnumeric)
 % Minimum Correlations-Wert für Match
-P.addOptional('min_corr', 0.8, @isnumeric)
+P.addOptional('min_corr', 0.9, @isnumeric)
 % Plot ein/aus
 P.addOptional('do_plot', false, @islogical);
 
@@ -30,7 +30,6 @@ end
 tic
 num_Merkmale1=size(Mpt1,2);
 num_Merkmale2=size(Mpt2,2);
-Korrespondenzen=[];
 window_size=floor(window_length/2);
 % Extract intesity values in window for all features in both images
 intensity_val1=-1*ones(window_length^2,num_Merkmale1);
@@ -40,6 +39,8 @@ for i=1:num_Merkmale1
     try
         intensity_val1(:,i)=reshape(I1(Mpt1(2,i)-window_size:Mpt1(2,i)+window_size,Mpt1(1,i)-window_size:Mpt1(1,i)+window_size),window_length^2,1);
     catch
+        % if error occurs, vector stays -1 and num_merkmal_border is
+        % increased
         num_merkmal_border(1)=num_merkmal_border(1)+1;
     end
 end
