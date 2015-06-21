@@ -1,7 +1,7 @@
 function [] = zeige_korrespondenzen( I1, I2, Korrespondenzen )
 %Zeige Korrespondenzpunktpaare an
 %% Zeige die Robusten Korrespondenzpunktpaare
-    figure('name', 'Punkt-Korrespondenzen');
+    figure('name', 'Nach RanSac');
     imshow(uint8(I1))
     hold on
     plot(Korrespondenzen(1,:),Korrespondenzen(2,:),'r*')
