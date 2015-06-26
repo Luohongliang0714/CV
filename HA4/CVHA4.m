@@ -1,4 +1,4 @@
-% Gruppenmitglieder:
+% Gruppenmitglieder: Simon Bilgeri, Christoph Wittmann
 
 %% Bilder laden
 Image1 = imread('szeneL.jpg');
@@ -48,11 +48,11 @@ load('K.mat');
 E = achtpunktalgorithmus(Korrespondenzen_robust,K);
 
 
-%% Extraktion der mÃ¶glichen euklidischen Bewegungen aus der Essentiellen Matrix und 3D-Rekonstruktion der Szene
-% [T1,R1,T2,R2] = TR_aus_E(E);
-% [T,R,lambdas,P1] = rekonstruktion(T1,T2,R1,R2,Korrespondenzen_robust,K);
+%% Extraktion der möglichen euklidischen Bewegungen aus der Essentiellen Matrix und 3D-Rekonstruktion der Szene
+ [T1,R1,T2,R2] = TR_aus_E(E);
+ [T,R,lambdas,P1] = rekonstruktion(T1,T2,R1,R2,Korrespondenzen_robust,K);
 
-%% Berechnung der RÃ¼ckprojektion auf die jeweils andere Bildebene
+%% Berechnung der Rückprojektion auf die jeweils andere Bildebene
 % repro_error = rueckprojektion(Korrespondenzen_robust, P1, IGray2, T, R, K);
 
 
