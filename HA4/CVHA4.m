@@ -8,13 +8,13 @@ Image2 = imread('szeneR.jpg');
 IGray2 = rgb_to_gray(Image2);
 
 %% Harris-Merkmale berechnen
-Merkmale1 = harris_detektor(IGray1,'k',0.05,'N',100,'min_dist',80,'segment_length',9,'do_plot',false);
-Merkmale2 = harris_detektor(IGray2,'k',0.05,'N',100,'min_dist',80,'segment_length',9,'do_plot',false);
+Merkmale1 = harris_detektor(IGray1,'k',0.05,'N',100,'min_dist',80,'segment_length',9,'tau', 1e6, 'do_plot',false);
+Merkmale2 = harris_detektor(IGray2,'k',0.05,'N',100,'min_dist',80,'segment_length',9,'tau', 1e6, 'do_plot',false);
 
 
 %% KorrespondenzschÃ¤tzung
-W=25;
-min_corr=0.95;
+W=91; 
+min_corr=0.90;
 tic
 Korrespondenzen = punkt_korrespondenzen(IGray1,IGray2,Merkmale1,Merkmale2,W,min_corr,'do_plot',false);
 t=toc;
@@ -22,8 +22,7 @@ t=toc;
 disp(['Es wurden ' num2str(size(Korrespondenzen,2)) ' Korrespondenzpunktpaare in ' num2str(t) 's gefunden.'])
 
 %% Finde robuste Korrespondenzpunktpaare mit Hilfe des RANSAC-Algorithmus'
-Korrespondenzen_robust = F_ransac(Korrespondenzen,'tolerance',0.015);
-
+Korrespondenzen_robust = F_ransac(Korrespondenzen,'tolerance',0.01,'epsilon',0.5,'p',0.9999);
 
 %% Zeige die robusten Korrespondenzpunktpaare
 figure('name', 'Punkt-Korrespondenzen nach RANSAC');
@@ -49,10 +48,10 @@ E = achtpunktalgorithmus(Korrespondenzen_robust,K);
 
 
 %% Extraktion der möglichen euklidischen Bewegungen aus der Essentiellen Matrix und 3D-Rekonstruktion der Szene
- [T1,R1,T2,R2] = TR_aus_E(E);
- [T,R,lambdas,P1] = rekonstruktion(T1,T2,R1,R2,Korrespondenzen_robust,K);
+[T1,R1,T2,R2] = TR_aus_E(E);
+[T,R,lambdas,P1] = rekonstruktion(T1,T2,R1,R2,Korrespondenzen_robust,K);
 
 %% Berechnung der Rückprojektion auf die jeweils andere Bildebene
-% repro_error = rueckprojektion(Korrespondenzen_robust, P1, IGray2, T, R, K);
+repro_error = rueckprojektion(Korrespondenzen_robust, P1, IGray2, T, R, K);
 
 
