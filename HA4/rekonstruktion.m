@@ -20,13 +20,13 @@ for r=1:2
         cell_vec=mat2cell(M,3,ones(size(Korrespondenzen,2),1));
         M=[blkdiag(cell_vec{:}),reshape(cross(x2,T_mat{t}*ones(1,size(Korrespondenzen,2))),size(Korrespondenzen,2)*3,1)];
         [~,~,V]=svd(M);
-        lambdas_temp=V(:,end);
+        lambdas_temp=V(:,end)/V(end,end);
         % Bild 2
         M=cross(x1,R_mat{r}'*x2);
         cell_vec=mat2cell(M,3,ones(size(Korrespondenzen,2),1));
-        M=[blkdiag(cell_vec{:}),reshape(cross(x1,R_mat{r}'*T_mat{t}*ones(1,size(Korrespondenzen,2))),size(Korrespondenzen,2)*3,1)];
+        M=[blkdiag(cell_vec{:}),reshape(cross(x1,-R_mat{r}'*T_mat{t}*ones(1,size(Korrespondenzen,2))),size(Korrespondenzen,2)*3,1)];
         [~,~,V]=svd(M);
-        lambdas_temp=[lambdas_temp,V(:,end)];
+        lambdas_temp=[lambdas_temp,V(:,end)/V(end,end)];
         % num_positive lambdas:
         if (sum(sum(lambdas_temp(1:end-1,:)>0)) > max_pos_lambdas)
             max_pos_lambdas=sum(sum(lambdas_temp(1:end-1,:)>0));

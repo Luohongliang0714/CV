@@ -1,5 +1,9 @@
 % Gruppenmitglieder: Simon Bilgeri, Christoph Wittmann
 
+%% Init random generator
+rng('default');
+rng(3);
+
 %% Bilder laden
 Image1 = imread('szeneL.jpg');
 IGray1 = rgb_to_gray(Image1);
